@@ -14,7 +14,6 @@ package kn.uni.voronoitreemap.interfaces;
 
 import java.io.File;
 
-import kn.uni.voronoitreemap.IO.PDFStatusObject;
 import kn.uni.voronoitreemap.IO.PNGStatusObject;
 import kn.uni.voronoitreemap.IO.WriteStatusObject;
 import kn.uni.voronoitreemap.j2d.PolygonSimple;
@@ -58,6 +57,8 @@ public class MainClass {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		args = new String[1];
+		args[0] = "/Users/sid/Desktop/git/elasticsearch.txt";
 		if (args.length == 0) {
 			System.out
 					.println("JVoroTreemap - Java Voronoi Treemap Library, (c) 2015 Arlind Nocaj, University of Konstanz\n  usage: VoronoiTreemap  [OPTIONS] FILE \n  "
@@ -73,7 +74,6 @@ public class MainClass {
 		}
 
 		String filePath = "";
-		boolean writePDF = false;
 		boolean pathIsDirectory = false;
 		boolean uniformWeight=true;
 		
@@ -86,9 +86,6 @@ public class MainClass {
 
 			if (option.equals("d")) {
 				pathIsDirectory = true;
-			}
-			if (option.equals("pdf")) {
-				writePDF = true;
 			}
 			if(option.equals("w")){
 				uniformWeight=false;
@@ -110,13 +107,10 @@ public class MainClass {
 		String name = new File(filename).getName();
 
 		PolygonSimple rootPolygon = new PolygonSimple();
-		int width = (int) (650 * 1.95);
-		int height = (int) (400 * 1.95);
+		int width = (int) (1000 * 1.95);
+		int height = (int) (1000 * 1.95);
 
-		// width=600*2;
-		// height=400*2;
-		//
-		int numPoints = 20;
+		int numPoints = 50;
 		for (int j = 0; j < numPoints; j++) {
 			double angle = 2.0 * Math.PI * (j * 1.0 / numPoints);
 			double rotate = 2.0 * Math.PI / numPoints / 2;
@@ -125,12 +119,6 @@ public class MainClass {
 			rootPolygon.add(x, y);
 		}
 
-		// rootPolygon.add(0, 0);
-		// rootPolygon.add(width, 0);
-		// rootPolygon.add(width, height);
-		// rootPolygon.add(0, height);
-
-		// VoronoiCore.setDebugMode();
 		VoronoiTreemap treemap = new VoronoiTreemap();
 		treemap.setRootPolygon(rootPolygon);
 		treemap.readEdgeList(filename);
@@ -141,14 +129,8 @@ public class MainClass {
 		treemap.setUniformWeights(uniformWeight);
 		treemap.setNumberThreads(8);
 
-		treemap.setStatusObject(new WriteStatusObject(getFileName(name, "txt",
-				"-finished"), treemap));
-		treemap.setStatusObject(new PNGStatusObject(getFileName(name, "png"),
-				treemap));
-		if(writePDF){
-		 treemap.setStatusObject(new
-		 PDFStatusObject(getFileName(name, "pdf"), treemap));
-		}
+		treemap.setStatusObject(new WriteStatusObject(getFileName(name, "txt","-finished"), treemap));
+		treemap.setStatusObject(new PNGStatusObject(getFileName(name, "png"), treemap));
 		treemap.computeLocked();
 	}
 

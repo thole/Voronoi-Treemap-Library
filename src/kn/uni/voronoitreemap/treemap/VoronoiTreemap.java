@@ -29,7 +29,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 
 import kn.uni.voronoitreemap.IO.IO;
-import kn.uni.voronoitreemap.IO.PDFStatusObject;
 import kn.uni.voronoitreemap.IO.PNGStatusObject;
 import kn.uni.voronoitreemap.IO.WriteStatusObject;
 import kn.uni.voronoitreemap.core.VoroSettings;
@@ -96,10 +95,8 @@ public class VoronoiTreemap implements Iterable<VoroNode>, StatusObject {
 	private ArrayList<Tuple3ID> relativePositions;
 
 	VoroSettings coreSettings = new VoroSettings();
-	private int[] levelsMaxIteration;
 	private Set<VoroCPU> runningThreads;
 	private int rootIndex;
-	private TreeData treeData;
 
 	/** when a node is finished the status object is notified. **/
 
@@ -261,10 +258,7 @@ public class VoronoiTreemap implements Iterable<VoroNode>, StatusObject {
 
 		//add statushandler
 		treemap.setStatusObject(new WriteStatusObject("miniHierarchy-result", treemap));
-		treemap.setStatusObject(new PNGStatusObject("miniHierarchy",
-				treemap));
-		treemap.setStatusObject(new
-				 PDFStatusObject("miniHierarchy", treemap));
+		treemap.setStatusObject(new PNGStatusObject("miniHierarchy",treemap));
 		treemap.computeLocked();				
 	}
 
@@ -461,42 +455,17 @@ public class VoronoiTreemap implements Iterable<VoroNode>, StatusObject {
 	 * @see treemap.voronoiTreemapInterface#drawTreemap(java.awt.Graphics2D)
 	 */
 	public void drawTreemap(Graphics2D g) {
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		int lastNodes = 0;
-		int amountPolygons = 0;
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		for (VoroNode node : this) {
-			int height = node.getHeight();
-			if (node.getChildren() == null) {
-				lastNodes++;
-			}
 			Site site = node.getSite();
 			if (site != null) {
-
 				PolygonSimple poly = site.getPolygon();
 				if (poly != null) {
-					// poly.shrinkForBorder(0.95);
-					amountPolygons++;
 					g.draw(poly);
 				}
 			}
 
 		}
-		// System.out.println("LeafNodes:" + lastNodes);
-		// System.out.println("AmountPolygons:" + amountPolygons);
-
-		// VoroRenderer renderer = new VoroRenderer();
-		// renderer.setTreemap(this);
-		// renderer.renderTreemap();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see treemap.voronoiTreemapInterface#setNumberIterationsLevel(int[])
-	 */
-	public void setNumberIterationsLevel(int[] levelsMaxIteration) {
-		this.levelsMaxIteration = levelsMaxIteration;
 	}
 
 	protected void drawTreemapWithComponents(Graphics2D g) {
@@ -504,10 +473,6 @@ public class VoronoiTreemap implements Iterable<VoroNode>, StatusObject {
 			JPolygon jp = new JPolygon(child.getNodeID(), new Integer(
 					child.getNodeID()).toString());
 		}
-	}
-
-	void setGraphics(Graphics2D graphics) {
-		this.graphics = graphics;
 	}
 
 	protected Graphics2D getGraphics() {
@@ -745,7 +710,6 @@ public class VoronoiTreemap implements Iterable<VoroNode>, StatusObject {
 	}
 
 	public void setTreeData(TreeData treeData) {
-		this.treeData = treeData;
 		rootIndex = treeData.rootIndex;
 
 		setTree(treeData.tree);

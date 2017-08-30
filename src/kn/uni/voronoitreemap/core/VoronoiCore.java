@@ -36,17 +36,11 @@ import kn.uni.voronoitreemap.j2d.Site;
  * @author Arlind Nocaj
  */
 public class VoronoiCore {
-	// TODO remove when finished
 	public static boolean debugMode = false;
 	public static ImageFrame frame;
 	public static Graphics2D graphics;
-	// private SVGGraphics2D svgGraphics;
-	private static Random rand = new Random(99);
 	/** If this mode is true, svg files are created in each iteration **/
-	private boolean outPutMode;
-	/** Counter for creating the output files. **/
-	private int outCounter = 1;
-
+	
 	/**
 	 * core variables
 	 */
@@ -66,7 +60,6 @@ public class VoronoiCore {
 	protected double currentAreaError = 1.0;
 
 	// level in the hierarchy, level=0 is the first layer
-	private int level;
 	private Point2D center;
 	private double scale;
 	private AffineTransform transform;
@@ -178,16 +171,6 @@ public class VoronoiCore {
 		currentIteration++;
 	}
 
-	private void fixNoPolygonSites() {
-		for (Site a : sites) {
-			if (a.getPolygon() == null) {
-				fixWeightsIfDominated(sites);
-				voroDiagram();
-				break;
-			}
-		}
-	}
-
 	public boolean checkBadResult(OpenList sites) {
 		for (Site a : sites) {
 			if (a.getPolygon() == null)
@@ -279,7 +262,6 @@ public class VoronoiCore {
 	private void adaptWeightsSimple(OpenList sites) {
 		Site[] array = sites.array;
 		int size = sites.size;
-		Random rand = new Random(5);
 		double averageDistance = getGlobalAvgNeighbourDistance(sites);
 		// double averageWeight=getAvgWeight(sites);
 		// averageDistance+=averageWeight;
@@ -345,72 +327,6 @@ public class VoronoiCore {
 		}
 	}
 
-	private void fixWeightsIfDominated2(OpenList sites) {
-
-		// get all nearest neighbors
-		OpenList copy = sites.cloneWithZeroWeights();
-		for (Site s : sites)
-			if (Double.isNaN(s.getWeight()))
-				System.out.println(s);
-		PowerDiagram diagram = new PowerDiagram(sites,
-				sites.getBoundsPolygon(20));
-		diagram.computeDiagram();
-
-		// set pointer to original site
-		for (int z = 0; z < sites.size; z++)
-			copy.array[z].setData(sites.array[z]);
-
-		for (int z = 0; z < copy.size; z++) {
-			Site pointCopy = copy.array[z];
-			Site point = sites.array[z];
-			if (pointCopy.getNeighbours() != null)
-				for (Site neighbor : pointCopy.getNeighbours()) {
-					Site original = (Site) neighbor.getData();
-					if (original.getPolygon() == null) {
-						double dist = pointCopy.distance(neighbor) * nearlyOne;
-						if (Math.sqrt(pointCopy.getWeight()) > dist) {
-							double weight = dist * dist;
-							point.setWeight(weight);
-						}
-					}
-				}
-
-		}
-
-	}
-
-	/**
-	 * Computes the minimal distance to the voronoi Diagram neighbours
-	 */
-	private double getMinNeighbourDistance(Site point) {
-		double minDistance = Double.MAX_VALUE;
-		for (Site neighbour : point.getNeighbours()) {
-			double distance = neighbour.distance(point);
-			if (distance < minDistance) {
-				minDistance = distance;
-			}
-		}
-		return minDistance;
-	}
-
-	private double getAvgNeighbourDistance(Site point) {
-		double avg = 0;
-		for (Site neighbour : point.getNeighbours()) {
-			double distance = neighbour.distance(point);
-			avg += distance;
-		}
-		avg /= point.getNeighbours().size();
-		return avg;
-	}
-
-	private double getAvgWeight(OpenList sites) {
-		double avg = 0;
-		int num = sites.size;
-		for (Site point : sites)
-			avg += point.getWeight();
-		avg /= num;
-		return avg;
-	}
 
 	private double getGlobalAvgNeighbourDistance(OpenList sites) {
 		double avg = 0;
@@ -424,18 +340,6 @@ public class VoronoiCore {
 				}
 		avg /= num;
 		return avg;
-	}
-
-	private double getMinNeighbourDistanceOld(Site point) {
-		double minDistance = Double.MAX_VALUE;
-
-		for (Site neighbour : point.getOldNeighbors()) {
-			double distance = neighbour.distance(point);
-			if (distance < minDistance) {
-				minDistance = distance;
-			}
-		}
-		return minDistance;
 	}
 
 	/**
@@ -497,14 +401,6 @@ public class VoronoiCore {
 				point.setXY(p.x, p.y);
 				continue;
 			}
-			// double x=0;
-			// double y=0;
-			// do{
-			// x=rand.nextDouble()-dist*1E-6;
-			// y=rand.nextDouble()-dist*1E-6;
-			// }while(!clipPolygon.contains(point.x+x,point.y+y));
-			// point.setXY(x, y);
-
 		}
 	}
 
@@ -676,30 +572,7 @@ public class VoronoiCore {
 			// frame.resize(frame.getSize());
 			// frame.validate();
 		}
-		// if (outPutMode){
-		// drawState(svgGraphics, false);
-		// // svgGraphics.setBackground(Color.black);
-		// // svgGraphics.clearRect(bb.x,bb.y,bb.width,bb.height);
-		// // Finally, stream out SVG to the standard output using
-		// // UTF-8 encoding.
-		// boolean useCSS = true; // we want to use CSS style attributes
-		// String filename="treemapIter-"+outCounter++ +".svg";
-		// try {
-		//
-		// Writer out = new BufferedWriter(new OutputStreamWriter(
-		//
-		// new FileOutputStream(filename), "UTF8"));
-		// svgGraphics.stream(out, useCSS);
-		// out.flush();
-		// out.close();
-		// }catch(Exception e){
-		// e.printStackTrace();
-		// }
-		// createPDF(filename, svgGraphics);
-		// }
 	}
-
-	
 
 	public Color getFillColorScaled(Site s) {
 		double increase = s.getLastIncrease();
@@ -708,11 +581,9 @@ public class VoronoiCore {
 		double completeArea = clipPolygon.getArea();
 		double wantedArea = completeArea * s.getPercentage();
 		double value = wantedArea / completeArea;
-		InterpolColor interpolPos = new InterpolColor(1, 2, 0.6, 0.0, 0.8, 0.6,
-				1.0, 0.8);
+		InterpolColor interpolPos = new InterpolColor(1, 2, 0.6, 0.0, 0.8, 0.6, 1.0, 0.8);
 
-		InterpolColor interpolNeg = new InterpolColor(0.5, 1.0, 0.0, 0.9, 0.8,
-				0.0, 0.0, 0.8);
+		InterpolColor interpolNeg = new InterpolColor(0.5, 1.0, 0.0, 0.9, 0.8, 0.0, 0.0, 0.8);
 
 		int alpha = (int) value * 256 + 50;
 		if (increase < 1.0) {
@@ -732,61 +603,20 @@ public class VoronoiCore {
 			if (transform != null)
 				g.setTransform(transform.createInverse());
 		} catch (NoninvertibleTransformException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		// g.translate(center.x, center.y);
-		// g.scale(1/scale,1/scale);
-
-		// g.clearRect(-2000, -2000, 5000, 5000);
-		// g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-		// RenderingHints.VALUE_ANTIALIAS_ON);
-
-		// g.setColor(Colors.circleBorder);
-		// g.draw(clipPolygon);
-
-		// Site[] array = sites.array;
-		// int size = sites.size;
-		//
-		// for (int z = 0; z < size; z++) {
-		// Site s = array[z];
-		// g.setColor(Colors.circleFill);
-		// s.paint(g);
-		// s.paintLastIncrease(g, 15);
-		//
-		// // // write the number of the site down
-		// // g.setColor(Color.black);
-		// // g.setFont(g.getFont().deriveFont(7F));
-		// // g.drawString(new Integer(z + 1).toString(), (int) s.getX() + 1,
-		// // (int) s.getY() - 1);
-		//
-		// }
 
 		for (Site s : sites) {
-			// if(isLast){
 			g.setColor(Colors.circleFill);
 			s.paint(g);
-			// s.paintLastIncrease(g, 15);
-			// }
 			PolygonSimple poly = s.getPolygon();
 			if (poly != null) {
-				// poly.shrinkForBorder(0.1);
 				g.setColor(getFillColorScaled(s));
 				g.fill(poly);
-				// poly.shrinkForBorder(0.9);
 				g.setColor(Color.red);
 				g.draw(poly);
-				// Double centroid = poly.getCentroid();
-				// g.drawRoundRect(centroid.x-, y, width, height, arcWidth,
-				// arcHeight)
 			}
-
-			// // write the number of the site down
-			// g.setColor(Color.black);
-			// g.setFont(g.getFont().deriveFont(7F));
-			// g.drawString(new Integer(z + 1).toString(), (int) s.getX() + 1,
-			// (int) s.getY() - 1);
 
 			g.drawString("AreaError: " + computeAreaError(sites), 30, 80);
 			g.drawString("Iteration: " + currentIteration, 30, 110);
@@ -821,21 +651,12 @@ public class VoronoiCore {
 	 }
 	 sites.get(0).setPercentage(50);
 	 sites.get(1).setPercentage(50);
-	 // sites.get(6).setWeight(2000);
-	 // sites.get(6).setXY(270, 320);
-	 // System.out.println(sites.get(6));
-	 // width=600;
-	 // height=600;
 	
 	 rootPolygon.add(0, 0);
 	 rootPolygon.add(width, 0);
 	 rootPolygon.add(width, height);
 	 rootPolygon.add(0, height);
-		
 	
-	 core.setDebugMode(); 
-	 core.normalizeSites(sites);
-
 	 core.setSites(sites);
 	 core.setClipPolygon(rootPolygon);
 	 core.doIterate();	 
@@ -856,10 +677,6 @@ public class VoronoiCore {
 			s.setPercentage(s.getPercentage() / sum);
 		}
 
-	}
-
-	public void setLevel(int height) {
-		this.level = height;
 	}
 
 	public void setSettings(VoroSettings coreSettings) {

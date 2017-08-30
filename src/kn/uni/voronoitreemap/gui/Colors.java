@@ -22,48 +22,33 @@ import java.util.List;
  *
  */
 public class Colors {
-public static List<Color> getColors(){
-	
-//	ArrayList<Color> colors=new ArrayList<Color>();
-//	colors.add(new Color(247,251,255));
-//	colors.add(new Color(222,235,247));
-//	colors.add(new Color(198,219,239));
-//	colors.add(new Color(158,202,225));
-//	colors.add(new Color(107,174,214));
-//	colors.add(new Color(66,146,198));
-//	colors.add(new Color(33,113,181));
-//	colors.add(new Color(8,81,156));
-//	colors.add(new Color(8,48,107));
+	public static List<Color> getColors() {
 
-	int alpha=50;
-	ArrayList<Color> colors=new ArrayList<Color>();
-//	colors.add(Color.gray);
-//	colors.add(new Color(255,255,255,100));
-	colors.add(new Color(247,251,255,alpha));
-	colors.add(new Color(222,235,247,alpha));
-	colors.add(new Color(198,219,239,alpha));
-	colors.add(new Color(158,202,225,alpha));
-	colors.add(new Color(107,174,214,alpha));
-	colors.add(new Color(66,146,198,alpha));
-	colors.add(new Color(33,113,181,alpha));
-	colors.add(new Color(8,81,156,alpha));
-	colors.add(new Color(8,48,107,alpha));
-//	Collections.reverse(colors);
-	return colors;
-}
+		int alpha = 50;
+		ArrayList<Color> colors = new ArrayList<Color>();
+		colors.add(new Color(247, 251, 255, alpha));
+		colors.add(new Color(222, 235, 247, alpha));
+		colors.add(new Color(198, 219, 239, alpha));
+		colors.add(new Color(158, 202, 225, alpha));
+		colors.add(new Color(107, 174, 214, alpha));
+		colors.add(new Color(66, 146, 198, alpha));
+		colors.add(new Color(33, 113, 181, alpha));
+		colors.add(new Color(8, 81, 156, alpha));
+		colors.add(new Color(8, 48, 107, alpha));
+		return colors;
+	}
 
-public static List<Color> getColorsRed(){
-	
-	ArrayList<Color> colors=new ArrayList<Color>();
-	colors.add(new Color(255, 255, 178));
-	colors.add(new Color(255, 255, 178));
-	colors.add(new Color(254, 204, 92));
-//	colors.add(new Color(253, 141, 60));
-	colors.add(new Color(240, 59, 32));
-	colors.add(new Color(189, 0, 38));
-colors.add(new Color(189, 0, 38).darker());
-	
-	return colors;
-}
+	public static List<Color> getColorsRed() {
+
+		ArrayList<Color> colors = new ArrayList<Color>();
+		colors.add(new Color(255, 255, 178));
+		colors.add(new Color(255, 255, 178));
+		colors.add(new Color(254, 204, 92));
+		colors.add(new Color(240, 59, 32));
+		colors.add(new Color(189, 0, 38));
+		colors.add(new Color(189, 0, 38).darker());
+
+		return colors;
+	}
 
 }

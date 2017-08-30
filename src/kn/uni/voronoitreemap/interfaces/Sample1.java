@@ -1,6 +1,5 @@
 package kn.uni.voronoitreemap.interfaces;
 
-import kn.uni.voronoitreemap.IO.PDFStatusObject;
 import kn.uni.voronoitreemap.IO.PNGStatusObject;
 import kn.uni.voronoitreemap.interfaces.data.TreeData;
 import kn.uni.voronoitreemap.j2d.PolygonSimple;
@@ -66,7 +65,6 @@ public class Sample1 {
 
 		//add result handler
 		treemap.setStatusObject(new PNGStatusObject("miniHierarchy", treemap));
-		treemap.setStatusObject(new PDFStatusObject("miniHierarchy", treemap));
 		treemap.computeLocked();
 
 	}

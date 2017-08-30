@@ -12,7 +12,6 @@
  ******************************************************************************/
 package kn.uni.voronoitreemap.treemap;
 
-
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,44 +24,43 @@ import kn.uni.voronoitreemap.j2d.Point2D;
 import kn.uni.voronoitreemap.j2d.PolygonSimple;
 import kn.uni.voronoitreemap.j2d.Site;
 
-
-
 /**
- * Represents a node in the Voronoi Treemap hierarchy. This node is put into the computation queue. 
+ * Represents a node in the Voronoi Treemap hierarchy. This node is put into the
+ * computation queue.
  * 
  * @author Arlind Nocaj
  * 
  */
 public class VoroNode implements VoroCellObject {
 
-	//pointers to higher levels of the hierarchy
+	// pointers to higher levels of the hierarchy
 	/**
 	 * tree information
 	 */
 	private VoronoiTreemap treemap;
 	private VoroNode parent;
 	private ArrayList<VoroNode> children;
-	
+
 	private Integer nodeID;
-	private int height=0;
+	private int height = 0;
 	private PolygonSimple polygon;
 	private boolean toConsider = true;
-	
-	private double weight=1;
+
+	private double weight = 1;
 	private VoronoiCore core;
 	private Site site;
-	private double wantedPercentage=0;
+	private double wantedPercentage = 0;
 	private Point2D relativeVector;
 	public String name;
-	
+
 	public VoroNode(int nodeID) {
 		this.nodeID = nodeID;
-		relativeVector=new Point2D();
+		relativeVector = new Point2D();
 	}
-	
-	public VoroNode(int nodeID, int numberChildren){
+
+	public VoroNode(int nodeID, int numberChildren) {
 		this(nodeID);
-		children=new ArrayList<VoroNode>(numberChildren);
+		children = new ArrayList<VoroNode>(numberChildren);
 	}
 
 	public void calculateWeights() {
@@ -77,81 +75,44 @@ public class VoroNode implements VoroCellObject {
 		}
 
 		for (VoroNode child : children) {
-			child.setWantedPercentage(child.getWeight() / sum);			
+			child.setWantedPercentage(child.getWeight() / sum);
 		}
 		this.weight = sum;
 
 	}
-	
-	public void setSpiralRelativeCoordinates(){		
+
+	public void setSpiralRelativeCoordinates() {
 		if (children == null || children.size() == 0) {
 			return;
 		}
-		
-		
-		
-		ArrayList<VoroNode> nodes=children;
-		
-		Collections.sort(nodes,new Comparator<VoroNode>() {
+
+		ArrayList<VoroNode> nodes = children;
+
+		Collections.sort(nodes, new Comparator<VoroNode>() {
 			@Override
 			public int compare(VoroNode o1, VoroNode o2) {
-				
-				// TODO Auto-generated method stub
-				return -Double.compare(o1.getWantedPercentage(),o2.getWantedPercentage());
-				
+				return -Double.compare(o1.getWantedPercentage(), o2.getWantedPercentage());
 			}
 
 		});
-	
-		
-		int i=0;
-		Random rand=new Random();
+
+		int i = 0;
+		Random rand = new Random();
 		for (VoroNode voroNode : nodes) {
-			double angle=Math.PI*2.0*(i*1.0/nodes.size());
-			double b=1;
-			double a=1;
-//			double radius=b*Math.exp(a*angle);
-			double radius=1-i*1.0/nodes.size()+(rand.nextFloat()-0.5)*0.2;
-			double x =Math.cos(angle);
-			double y =Math.sin(angle);
-			x*=radius;
-			y*=radius;
+			double angle = Math.PI * 2.0 * (i * 1.0 / nodes.size());
+			double radius = 1 - i * 1.0 / nodes.size() + (rand.nextFloat() - 0.5) * 0.2;
+			double x = Math.cos(angle);
+			double y = Math.sin(angle);
+			x *= radius;
+			y *= radius;
 			voroNode.setRelativeVector(new Point2D(x, y));
 			i++;
 		}
-		
-		for (VoroNode child : children) 
+
+		for (VoroNode child : children)
 			child.setSpiralRelativeCoordinates();
-		
+
 	}
-
-//	@Override
-//	public void doFinalWork() {
-//		polygonComponent.setVoroPolygon(polygon, getHeight());
-//		if (hasLeaf) {
-//			polygonComponent.setIsLast(true);
-//		}
-//
-//		if (this.getPolygon().getArea() / getParent().getPolygon().getArea() > 0.9) {
-//			// our area is not much smaller then the area of our parent, we
-//			// still need to do make the font smaller
-//			polygonComponent.setMakeFontSmaller(true);
-//		}
-//		polygonComponent.setFillColor(Colors.getColors().get(getHeight()));
-//
-//		// polygonComponent.setFillColor(VoronoiTreemap.interpolColor.getColorLinear(scoreValue,80));
-//		if (!polygonComponent.isVisible())
-//			polygonComponent.setVisible(true);
-//		polygonComponent.doFinalWork();
-//		// save relative position to the centroid of the parent
-//		// NPolygon2D parentPolygon = parent.getPolygon();
-//		// Point2D parentCentroid = parentPolygon.calculateCentroid();
-//		// Point2D myPosition = polygon.calculateCentroid();
-//		// setRelativeVector(new Punkt(myPosition.getX() -
-//		// parentCentroid.getX(),
-//		// myPosition.getY() - parentCentroid.getY()));
-//	}
-
 
 	public void setNodeID(int nodeID) {
 		this.nodeID = nodeID;
@@ -194,7 +155,7 @@ public class VoroNode implements VoroCellObject {
 	}
 
 	public void setWantedPercentage(double percentage) {
-		this.weight=percentage;
+		this.weight = percentage;
 		this.wantedPercentage = percentage;
 		if (site != null)
 			site.setPercentage(percentage);
@@ -215,15 +176,14 @@ public class VoroNode implements VoroCellObject {
 	}
 
 	public void iterate() {
-		
-		
-		
-//		System.out.println("VoroNode begin Iteration Node: " + getNodeID()+ " Layer: " + getHeight() + "  " + Arrays.toString(getChildrenIDs()));
+
+		// System.out.println("VoroNode begin Iteration Node: " + getNodeID()+ "
+		// Layer: " + getHeight() + " " + Arrays.toString(getChildrenIDs()));
 		if (children == null || children.size() == 0)
 			return;
 		if (site != null)
-			polygon=this.site.getPolygon();		
-		
+			polygon = this.site.getPolygon();
+
 		scaleRelativeVectors();
 		if (this.core == null) {
 			core = new VoronoiCore(this.polygon);
@@ -231,7 +191,7 @@ public class VoroNode implements VoroCellObject {
 			// add each children as a site
 			for (VoroNode child : children) {
 				Point2D p = polygon.getRelativePosition(child.relativeVector);
-			
+
 				Site s = new Site(p.getX(), p.getY());
 
 				s.setPercentage(child.wantedPercentage);
@@ -261,7 +221,7 @@ public class VoroNode implements VoroCellObject {
 					// // for the root childs we can directly set the old
 					// // location
 					// //in this case just leave the old location
-					//					
+					//
 					// //we have precalculated relative Vectors for each cell,
 					// so use them also for the root
 					// }
@@ -272,11 +232,10 @@ public class VoroNode implements VoroCellObject {
 
 		}
 
-		
 		core.doIterate();
 
 		if (treemap.getUseBorder()) {
-			double shrinkPercentage=treemap.getShrinkPercentage();
+			double shrinkPercentage = treemap.getShrinkPercentage();
 			int length = core.getSites().size;
 			Site[] sites = core.getSites().array;
 			for (int i = 0; i < length; i++) {
@@ -293,18 +252,18 @@ public class VoroNode implements VoroCellObject {
 	public void scaleRelativeVectors() {
 		if (getChildren() == null)
 			return;
-		
-		if(polygon==null && getParent().getChildren().size()==1){
-			//clone from daddy
-			polygon=getParent().getPolygon().clone();
+
+		if (polygon == null && getParent().getChildren().size() == 1) {
+			// clone from daddy
+			polygon = getParent().getPolygon().clone();
 		}
-		
-		if (getChildren().size() == 1) {			
-			VoroNode child = getChildren().get(0);			
+
+		if (getChildren().size() == 1) {
+			VoroNode child = getChildren().get(0);
 			child.setRelativeVector(polygon.getInnerPoint());
 			return;
 		}
-		
+
 		Rectangle bounds = polygon.getBounds();
 
 		double minX = Double.MAX_VALUE;
@@ -316,9 +275,8 @@ public class VoroNode implements VoroCellObject {
 		double localCenterY = 0;
 		for (VoroNode child : getChildren()) {
 			Point2D pos = child.getRelativeVector();
-			// TODO
 			if (pos == null) {
-				pos=this.polygon.getInnerPoint();
+				pos = this.polygon.getInnerPoint();
 			}
 
 			localCenterX += pos.getX();
@@ -342,29 +300,19 @@ public class VoroNode implements VoroCellObject {
 
 		double scaleX = (bounds.getWidth() / (maxX - minX)) * 0.9;
 		double scaleY = (bounds.getHeight() / (maxY - minY)) * 0.9;
-		double centerX = bounds.getCenterX();
-		double centerY = bounds.getCenterY();
 
 		for (VoroNode child : getChildren()) {
 			Point2D pos = child.getRelativeVector();
-			pos.setLocation((pos.getX() - localCenterX) * scaleX,
-					(pos.getY() - localCenterY) * scaleY);
+			pos.setLocation((pos.getX() - localCenterX) * scaleX, (pos.getY() - localCenterY) * scaleY);
 		}
 	}
 
-	private void setSettingsToCore(){
-		core.setLevel(height);		
-//		if(this.height<=1){
-//			VoroSettings copy = treemap.coreSettings.clone();
-//			copy.errorThreshold*=0.01;
-//			core.setSettings(copy);
-//		}else
-		core.setSettings(treemap.coreSettings);								
+	private void setSettingsToCore() {
+		core.setSettings(treemap.coreSettings);
 	}
-	
+
 	public void increasePercentageDirectly() {
 		weight = weight * 1.5;
-		// site.percent=site.percent*1.5;
 	}
 
 	public void decreasePercentage() {
@@ -394,8 +342,6 @@ public class VoroNode implements VoroCellObject {
 	public Site getSite() {
 		return site;
 	}
-	
-	
 
 	// public static void main(String[] args) {
 	// long start = System.currentTimeMillis();
@@ -410,7 +356,7 @@ public class VoroNode implements VoroCellObject {
 	// }
 
 	public void setTreemap(VoronoiTreemap treemap) {
-		this.treemap = treemap;		
+		this.treemap = treemap;
 	}
 
 	public VoronoiTreemap getTreemap() {
@@ -425,56 +371,52 @@ public class VoroNode implements VoroCellObject {
 		return relativeVector;
 	}
 
-
 	@Override
 	public void doFinalWork() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void setVoroPolygon(PolygonSimple polygon) {
-		this.polygon=polygon;
+		this.polygon = polygon;
 	}
-	
-public int[] getChildrenIDs(){
-	int length;
-		if (children==null || (length=children.size())==0){
+
+	public int[] getChildrenIDs() {
+		int length;
+		if (children == null || (length = children.size()) == 0) {
 			return null;
 		}
 		int[] ids = new int[length];
-		int i=0;
-		for (VoroNode node:children){
-			ids[i]=node.getNodeID();
+		int i = 0;
+		for (VoroNode node : children) {
+			ids[i] = node.getNodeID();
 			i++;
 		}
 		return ids;
 	}
 
-public PolygonSimple[] getChildrenPolygons(){
-	int length;
-	if (children==null || (length=children.size())==0){
-		return null;
+	public PolygonSimple[] getChildrenPolygons() {
+		int length;
+		if (children == null || (length = children.size()) == 0) {
+			return null;
+		}
+		PolygonSimple[] polygons = new PolygonSimple[length];
+		int i = 0;
+		for (VoroNode node : children) {
+			polygons[i] = node.getSite().getPolygon();
+			i++;
+		}
+		return polygons;
 	}
-	PolygonSimple[] polygons=new PolygonSimple[length];
-	int i=0;
-	for (VoroNode node:children){
-		polygons[i]=node.getSite().getPolygon();
-		i++;
+
+	public void setName(String name) {
+		this.name = name;
 	}
-	return polygons;
-}
 
-public void setName(String name) {
-	this.name=name;
-}
-
-public String getName() {		
-	if(getParent()!=null && getParent().getChildren().size()==1){
-		return getParent().getName()+"."+this.name;
+	public String getName() {
+		if (getParent() != null && getParent().getChildren().size() == 1) {
+			return getParent().getName() + "." + this.name;
+		}
+		return this.name;
 	}
-	return this.name;
-}
-
 
 }

@@ -48,8 +48,7 @@ public class PNGStatusObject implements StatusObject {
 		Rectangle rootRect = rootPolygon.getBounds();
 		Graphics2D g;
 		
-		this.bufferImage = new BufferedImage(rootRect.width+2*border, rootRect.height+2*border,
-					BufferedImage.TYPE_INT_ARGB);
+		this.bufferImage = new BufferedImage(rootRect.width+2*border, rootRect.height+2*border,BufferedImage.TYPE_INT_ARGB);
 		
 		g = bufferImage.createGraphics();
 		VoroRenderer renderer=new VoroRenderer();
@@ -68,10 +67,6 @@ public class PNGStatusObject implements StatusObject {
 	}
 
 	@Override
-	public void finishedNode(int Node, int layer, int[] children,
-			PolygonSimple[] polygons) {
-		// TODO Auto-generated method stub
-
+	public void finishedNode(int Node, int layer, int[] children, PolygonSimple[] polygons) {
 	}
-
 }
