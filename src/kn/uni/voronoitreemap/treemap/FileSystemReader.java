@@ -62,15 +62,13 @@ public class FileSystemReader {
 	public String getLine(File file, int nodeId, int parentId) {
 		if (!file.exists())
 			return null;
-		// "nodeId,parrentId,name,size,createdDate,modifiedDate";
 		double length = 0;
 		if (file.isFile())
 			length = file.length();
 		
 		length=Math.max(length, 1);
 		length=Math.log(length)+1;		
-		String line = nodeId + ";" + parentId + ";" + file.getName().replace(";", "") + ";"
-				+ length;
+		String line = nodeId + ";" + parentId + ";" + file.getName().replace(";", "") + ";"+ length;
 		
 		return line;
 	}

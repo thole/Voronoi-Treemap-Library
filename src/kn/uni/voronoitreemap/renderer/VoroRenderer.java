@@ -24,7 +24,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.JLayeredPane;
@@ -82,8 +81,7 @@ public class VoroRenderer {
 
 		if (g == null) {
 			int border = 5;
-			bufferImage = new BufferedImage(rootRect.width + border, rootRect.height + border,
-					BufferedImage.TYPE_INT_ARGB);
+			bufferImage = new BufferedImage(rootRect.width + border, rootRect.height + border, BufferedImage.TYPE_INT_ARGB);
 			g = bufferImage.createGraphics();
 			g.translate(border, border);
 		}
@@ -95,11 +93,6 @@ public class VoroRenderer {
 		LinkedList<VoroNode> nodeList = new LinkedList<VoroNode>();
 		LinkedList<VoroNode> nodeListReverse = new LinkedList<VoroNode>();
 		for (VoroNode child : (VoronoiTreemap) treemap) {
-			// JPolygon2 jp = new JPolygon2(child.getNodeID(), new
-			// Integer(child.getNodeID()).toString());
-			// layeredPane.add(jp, -child.getHeight());
-			//
-			// jp.setVisible(true);
 			if (child.getPolygon() != null) {
 				nodeList.add(child);
 				nodeListReverse.addFirst(child);
@@ -109,50 +102,28 @@ public class VoroRenderer {
 			}
 		}
 
-		// System.out.println("Elements:" + nodeList.size());
-
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		//
-		int hue = 342;
-		// hue=180;
-		InterpolColor colRed = new InterpolColor(0, maxHeight + 1, hue / 360.0, 0.0, 1.0, hue / 360.0, 0.6, 0.40);
-		// draw polygon border
-		InterpolColor grayGetDarker = new InterpolColor(0, maxHeight, 0, 0, 0.5, 0, 0, 1.0);
-
-		// InterpolColor grayGetBrighter = new InterpolColor(1, maxHeight, 0, 0,
-		// 1.0, 0,
-		// 0, 0.9); //white border
 		InterpolColor grayGetBrighter = new InterpolColor(1, maxHeight, 0, 0, 0.4, 0, 0, 0.6);
 
-		g.setColor(Color.black);
-		g.setColor(colRed.getColorLinear(2));
 		g.fill(rootPolygon);
 		layeredPane.setSize(5000, 5000);
 		layeredPane.setVisible(true);
 		layeredPane.paintAll(g);
 
 		int showLayouer = 100;
-		// fill polygon
 		for (VoroNode child : nodeList) {
 			PolygonSimple poly = child.getPolygon();
 
 			int height = child.getHeight();
-			if (height > showLayouer)
+			if (height > showLayouer){
 				continue;
-			int level = Math.min(child.getHeight(), Colors.getColors().size() - 1);
-			Color fillColor = Colors.getColors().get(level);
-			fillColor = colRed.getColorLinear(height, 50);
-
-			g.setColor(fillColor);
+			}
+			int level = Math.min(child.getHeight(), Colors.getColorsIsi().size() - 1);
+			g.setColor(Colors.getColorsIsi().get(level));
 			g.fillPolygon(poly.getXpointsClosed(), poly.getYpointsClosed(), poly.length + 1);
-
-			g.setColor(Color.DARK_GRAY);
-			Color textCol = grayGetDarker.getColorLinear(height, 180);
-			textCol = new Color(255, 255, 255, 200);
-			g.setColor(textCol);
+			g.setColor(new Color(255, 255, 255, 200));
 			drawName(child, g);
-
 		}
 
 		// draw border in reverse order
@@ -160,7 +131,6 @@ public class VoroRenderer {
 			if (child.getHeight() > showLayouer)
 				continue;
 			PolygonSimple poly = child.getPolygon();
-			// Color col = grayScale.getColorLinear(child.getHeight());
 			Color col = grayGetBrighter.getColorLinear(child.getHeight(), 170);
 			double width = 5 * (1.0 / (child.getHeight()));
 			g.setStroke(new BasicStroke((int) width));
@@ -173,7 +143,6 @@ public class VoroRenderer {
 			try {
 				ImageIO.write(bufferImage, "png", new File(filename + ".png"));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -186,9 +155,7 @@ public class VoroRenderer {
 
 		if (child.getHeight() > 3)
 			return;
-		// if(child.getHeight()>2) continue;
-		//// if(child.getHeight()==3 && rand.nextDouble()<0.50) continue;
-
+		
 		double percent = child.getPolygon().getArea() / treemap.getRootPolygon().getArea();
 
 		if (percent < 0.015)
@@ -232,7 +199,6 @@ public class VoroRenderer {
 				return font;
 			nextTry *= .9;
 		}
-		// return font;
 	}
 
 	public Font scaleFont(String text, PolygonSimple poly, Graphics2D g, Font pFont) {
@@ -244,14 +210,11 @@ public class VoroRenderer {
 			font = g.getFont().deriveFont(nextTry);
 			FontMetrics fm = g.getFontMetrics(font);
 			Rectangle2D bounds = fm.getStringBounds(text, g);
-			// int width=fm.stringWidth(text);
 			double cx = center.x - bounds.getWidth() * 0.5;
 			double cy = center.y - bounds.getHeight() * 0.5;
 			Rectangle2D.Double rect = new Rectangle2D.Double(cx, cy, bounds.getWidth(), bounds.getHeight());
 			if (poly.contains(rect))
-				// if(width <= rect.width)
 				return font;
-
 			nextTry *= .9;
 		}
 		return font;

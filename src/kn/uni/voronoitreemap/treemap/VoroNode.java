@@ -52,6 +52,7 @@ public class VoroNode implements VoroCellObject {
 	private double wantedPercentage = 0;
 	private Point2D relativeVector;
 	public String name;
+	
 
 	public VoroNode(int nodeID) {
 		this.nodeID = nodeID;
@@ -210,22 +211,12 @@ public class VoroNode implements VoroCellObject {
 
 				if (child.getWantedPercentage() > 0) {
 					Point2D pos = null;
-					// if (getParent() != null) {
 					if (child.relativeVector != null) {
 						pos = polygon.getRelativePosition(child.relativeVector);
 					} else {
 						pos = polygon.getInnerPoint();
 					}
 					child.site.setXY(pos.getX(), pos.getY());
-					// } else {
-					// // for the root childs we can directly set the old
-					// // location
-					// //in this case just leave the old location
-					//
-					// //we have precalculated relative Vectors for each cell,
-					// so use them also for the root
-					// }
-					// child.site.setWeight(0.1);
 					core.addSite(child.site);
 				}
 			}

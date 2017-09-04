@@ -50,19 +50,12 @@ import kn.uni.voronoitreemap.j2d.Site;
  * 
  */
 public class VoronoiTreemap implements Iterable<VoroNode>, StatusObject {
-	/**
-	 * DEBUGGING
-	 */
+	
 	// TODO remove debug Mode
-	public static boolean debugMode = false;
 	public static ImageFrame frame;
 	public static Graphics2D graphics;
-	// geVoroRenderer renderer;
-
-	/**
-	 * DEBUGGING
-	 */
-
+	
+	
 	private boolean initialized = false;
 
 	private boolean useBorder = false;
@@ -202,66 +195,7 @@ public class VoronoiTreemap implements Iterable<VoroNode>, StatusObject {
 		node.setTreemap(this);
 	}
 
-	public static void main(String[] args) {									
-
-		//create a convex root polygon
-		PolygonSimple rootPolygon = new PolygonSimple();
-		int width = 300;
-		int height = 500;
-		int numPoints = 8;
-		for (int j = 0; j < numPoints; j++) {
-			double angle = 2.0 * Math.PI * (j * 1.0 / numPoints);
-			double rotate = 2.0 * Math.PI / numPoints / 2;
-			double y = Math.sin(angle + rotate) * height + height;
-			double x = Math.cos(angle + rotate) * width + width;
-			rootPolygon.add(x, y);
-		}
-		
-		//create hierarchy structure (first parent will be root element)
-		TreeData data=new TreeData();
-		data.addLink("README.md", "project");
-		data.addLink("file001", "project");
-		
-		data.addLink("folder1", "project");
-		data.addLink("file011", "folder1");
-		data.addLink("file012", "folder1");
-		
-		data.addLink("subfolder1", "folder1");
-		data.addLink("file111", "subfolder1");
-		data.addLink("file112", "subfolder1");
-		data.addLink("...", "subfolder1");
-		
-		data.addLink("folder2","folder1");
-		data.addLink("file021","folder2");
-		data.addLink("file022","folder2");	
-		
-		data.addLink("folder3", "project");
-		data.addLink("file031","folder3");
-		data.addLink("file032","folder3");
-		data.addLink("file033","folder3");
-		data.addLink("file034","folder3");
-		data.addLink("file035","folder3");
-		data.addLink("file036","folder3");
 	
-		
-		//VoronoiCore.setDebugMode(); //shows iteration process		
-		VoronoiTreemap treemap = new VoronoiTreemap();
-		//set options
-		treemap.setRootPolygon(rootPolygon);
-		treemap.setTreeData(data);
-		treemap.setCancelOnMaxIteration(true);
-		treemap.setNumberMaxIterations(1500);
-		treemap.setCancelOnThreshold(true);
-		treemap.setErrorAreaThreshold(0.01);
-		treemap.setUniformWeights(true);
-		treemap.setNumberThreads(1);
-
-		//add statushandler
-		treemap.setStatusObject(new WriteStatusObject("miniHierarchy-result", treemap));
-		treemap.setStatusObject(new PNGStatusObject("miniHierarchy",treemap));
-		treemap.computeLocked();				
-	}
-
 	public void setRootIndex(int rootIndex) {
 		this.rootIndex = rootIndex;
 	}
@@ -378,62 +312,7 @@ public class VoronoiTreemap implements Iterable<VoroNode>, StatusObject {
 		return new NodeIterator(root);
 	}
 
-	// /**
-	// * Searches for the Least Common Ancestor of two Nodes and return the
-	// Points
-	// * on the way to the Least Common Ancestor. Algorithm: Go the node with
-	// the
-	// * higher Level upwards until your reach a common node from both sides.
-	// *
-	// * @return Points on the way to the Least Common Ancestor
-	// */
-	// public ArrayList<Point2D> getSplinePoints(Integer nodeID1, Integer
-	// nodeID2,
-	// boolean removeLCA) {
-	// VoroNode node1 = nodeMap.get(nodeID1);
-	// VoroNode node2 = nodeMap.get(nodeID2);
-	// Point2D p1 = null;
-	// Point2D p2 = null;
-	// if (node1.getPolygon() == null) {
-	// p1 = node1.getParent().getPolygon().getInnerPoint();
-	// } else {
-	// p1 = node1.getPolygon().getCentroid();
-	// }
-	//
-	// if (node2.getPolygon() == null) {
-	// p2 = node2.getParent().getPolygon().getInnerPoint();
-	// } else {
-	// p2 = node2.getPolygon().getInnerPoint();
-	// }
-	//
-	// ArrayList<Point2D> list1 = new ArrayList<Point2D>();
-	// LinkedList<Point2D> list2 = new LinkedList<Point2D>();
-	//
-	// if (node1 == null || node2 == null) {
-	// throw new RuntimeException("No nodes found for given nodeID");
-	// }
-	//
-	// list1.add(p1);
-	// list2.add(p2);
-	// while (!node1.equals(node2)) {
-	// if (node1.getHeight() > node2.getHeight()) {
-	// node1 = node1.getParent();
-	// list1.add(node1.getPolygon().getCentroid());
-	// } else {
-	// node2 = node2.getParent();
-	// list2.addFirst(node2.getPolygon().getCentroid());
-	// }
-	// }
-	// // remove the least common ancestor point because he is two times in the
-	// // lists if (areaGoals!=null){
-	// list2.removeFirst();
-	// if (removeLCA) {
-	// list1.remove(list1.size() - 1);
-	// }
-	// list1.addAll(list2);
-	// return list1;
-	// }
-
+	
 	@Override
 	public synchronized void finished() {
 		for (StatusObject statusObject : this.statusObject)

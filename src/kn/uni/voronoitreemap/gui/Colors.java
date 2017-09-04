@@ -25,7 +25,7 @@ public class Colors {
 	public static List<Color> getColors() {
 
 		int alpha = 50;
-		ArrayList<Color> colors = new ArrayList<Color>();
+		List<Color> colors = new ArrayList<Color>();
 		colors.add(new Color(247, 251, 255, alpha));
 		colors.add(new Color(222, 235, 247, alpha));
 		colors.add(new Color(198, 219, 239, alpha));
@@ -39,15 +39,30 @@ public class Colors {
 	}
 
 	public static List<Color> getColorsRed() {
-
-		ArrayList<Color> colors = new ArrayList<Color>();
+		
+		List<Color> colors = new ArrayList<Color>();
 		colors.add(new Color(255, 255, 178));
 		colors.add(new Color(255, 255, 178));
 		colors.add(new Color(254, 204, 92));
 		colors.add(new Color(240, 59, 32));
 		colors.add(new Color(189, 0, 38));
 		colors.add(new Color(189, 0, 38).darker());
-
+		return colors;
+	}
+	
+	public static List<Color> getColorsIsi() {
+		int alpha = 100;
+		List<Color> colors = new ArrayList<Color>();
+	
+		colors.add(new Color(236, 219, 191,alpha));
+		colors.add(new Color(148, 62, 104,alpha));
+		colors.add(new Color(80, 116, 157,alpha));
+		colors.add(new Color(161, 48, 67,alpha));
+		colors.add(new Color(203, 115, 123,alpha));
+		colors.add(new Color(19, 129, 157,alpha));
+		colors.add(new Color(38, 101, 126,alpha));
+		colors.add(new Color(219, 186, 145,alpha));
+		
 		return colors;
 	}
 

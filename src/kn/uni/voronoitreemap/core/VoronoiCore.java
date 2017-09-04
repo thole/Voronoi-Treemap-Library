@@ -18,7 +18,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.Random;
 
 import kn.uni.voronoitreemap.datastructure.OpenList;
 import kn.uni.voronoitreemap.debug.ImageFrame;
@@ -150,20 +149,13 @@ public class VoronoiCore {
 	}
 
 	public void iterateSimple() {
-		// if(currentIteration<=settings.maxIterat){
 		moveSites(sites);
 		checkPointsInPolygon(sites);
-		// }
-
-		// voroDiagram();//does not seem to be necessary
-		// fixNoPolygonSites();
-
+		
 		// adapt weights
 		adaptWeightsSimple(sites);
 		voroDiagram();
 
-		// fixNoPolygonSites();
-		// fixWeightsIfDominated(sites);
 		if (frame != null)
 			frame.repaintWithWait(4);
 		currentAreaError = computeAreaError(sites);
@@ -175,9 +167,6 @@ public class VoronoiCore {
 		for (Site a : sites) {
 			if (a.getPolygon() == null)
 				return true;
-
-			// assert clipPolygon.contains(a.getPolygon().getCentroid());
-
 		}
 
 		return false;
@@ -263,15 +252,11 @@ public class VoronoiCore {
 		Site[] array = sites.array;
 		int size = sites.size;
 		double averageDistance = getGlobalAvgNeighbourDistance(sites);
-		// double averageWeight=getAvgWeight(sites);
-		// averageDistance+=averageWeight;
 		double error = computeAreaError(sites);
 		for (int z = 0; z < size; z++) {
 			Site point = array[z];
 			PolygonSimple poly = point.getPolygon();
 
-			// if(poly==null)
-			// System.out.println(point.getWeight()+"\t"+error);
 			double completeArea = clipPolygon.getArea();
 			double currentArea = (poly == null) ? 0.0 : poly.getArea();
 			double wantedArea = completeArea * point.getPercentage();
@@ -285,13 +270,8 @@ public class VoronoiCore {
 			double step = 0;
 			double errorTransform = (-(error - 1) * (error - 1) + 1);
 
-			// errorTransform=error;
-			// errorTransform=Math.max(errorTransform, settings.errorThreshold);
-			// if(currentIteration>settings.maxIterat)
-			// errorTransform*=rand.nextDouble();
-
+		
 			step = 1.0 * averageDistance * errorTransform;
-			// step=2*averageDistance*error;
 			double epsilon = 0.01;
 			if (increase < (1.0 - epsilon))
 				weight -= step;
@@ -356,10 +336,8 @@ public class VoronoiCore {
 				worked = true;
 			} catch (Exception e) {
 
-				System.out
-						.println("Error on computing power diagram, fixing by randomization");
-				// e.printStackTrace();
-
+				System.out.println("Error on computing power diagram, fixing by randomization");
+			
 				randomizePoints(sites);
 				adjustWeightsToBePositive(sites);
 				fixWeightsIfDominated(sites);
@@ -373,8 +351,7 @@ public class VoronoiCore {
 		System.out.println("OpenList list=new OpenList(" + sites.size + ");");
 		for (int i = 0; i < sites.size; i++) {
 			Site s = sites.array[i];
-			String line = "list.add(new Site(" + s.x + "," + s.y + ","
-					+ s.getWeight() + "));";
+			String line = "list.add(new Site(" + s.x + "," + s.y + ","+ s.getWeight() + "));";
 			System.out.println(line);
 		}
 
@@ -393,7 +370,6 @@ public class VoronoiCore {
 
 	private void randomizePoints(OpenList sites) {
 
-		// double dist=getGlobalAvgNeighbourDistance(sites);
 		for (int i = 0; i < sites.size; i++) {
 			Site point = sites.array[i];
 			if (!clipPolygon.contains(point.x, point.y)) {
@@ -430,7 +406,6 @@ public class VoronoiCore {
 		if (frame != null)
 			frame.setVoroCore(this);// debug mode
 
-		// solveDuplicates(this.sites);
 		currentIteration = 0;
 		currentAreaError = 1.0;
 
@@ -456,8 +431,6 @@ public class VoronoiCore {
 					break;
 			}
 
-			// System.out.println("Iter: " + currentIteration
-			// + "\t AreaError: \t" + lastAreaError);
 			if (frame != null)
 				frame.repaintWithWait(4);
 		}
@@ -569,15 +542,12 @@ public class VoronoiCore {
 		if (graphics != null) {
 			drawState(graphics, false);
 			frame.repaint();
-			// frame.resize(frame.getSize());
-			// frame.validate();
 		}
 	}
 
 	public Color getFillColorScaled(Site s) {
 		double increase = s.getLastIncrease();
 
-		// double area=s.getPolygon().getArea();
 		double completeArea = clipPolygon.getArea();
 		double wantedArea = completeArea * s.getPercentage();
 		double value = wantedArea / completeArea;
@@ -633,37 +603,7 @@ public class VoronoiCore {
 	}
 
 
-	 public static void main(String[] args) {
 	
-	 VoronoiCore.setDebugMode();
-	 VoronoiCore core = new VoronoiCore();
-	 OpenList sites = new OpenList();
-	 Random rand=new Random(200);
-	 int amount=500;
-	 PolygonSimple rootPolygon = new PolygonSimple();
-	 int width=1000;
-	 int height=1000;
-	
-	 for (int i=0;i<amount;i++){
-	 Site site = new Site(rand.nextDouble()*width, rand.nextDouble()*height);
-	 site.setPercentage(rand.nextFloat());
-	 sites.add(site);
-	 }
-	 sites.get(0).setPercentage(50);
-	 sites.get(1).setPercentage(50);
-	
-	 rootPolygon.add(0, 0);
-	 rootPolygon.add(width, 0);
-	 rootPolygon.add(width, height);
-	 rootPolygon.add(0, height);
-	
-	 core.setSites(sites);
-	 core.setClipPolygon(rootPolygon);
-	 core.doIterate();	 
-	
-	 // }
-	 }
-
 	public static void normalizeSites(OpenList sites) {
 		double sum = 0;
 		Site[] array = sites.array;

@@ -33,24 +33,13 @@ public class MainClass {
 	 * @param extension
 	 * @return
 	 */
-	public static String getFileName(String name, String extension,
-			String suffix) {
+	public static String getFileName(String name, String extension, String suffix) {
 		if (name.contains("."))
 			name = name.substring(0, name.lastIndexOf("."));// remove extension
 															// if there is one
 
 		name += suffix;
-		String fileName = name;
-
-		File file = new File(fileName + "." + extension);
-		int i = 1;
-		while (file.exists()) {
-			String num = String.format("%03d", i);
-			fileName = name + num;
-			file = new File(fileName + "." + extension);
-			i++;
-		}
-		return fileName;
+		return name;
 	}
 
 	/**
@@ -94,9 +83,6 @@ public class MainClass {
 		}
 
 		if (pathIsDirectory) {
-			// FileSystemReader reader = new
-			// FileSystemReader("/home/nocaj/git/linux");
-			
 			FileSystemReader reader = new FileSystemReader(filePath);
 			reader.createTreeFile();
 			filePath = reader.getExportFile();
